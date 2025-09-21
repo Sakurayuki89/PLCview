@@ -1,0 +1,499 @@
+{% extends "base.html" %}
+
+{% block title %}PLC 학습하기 - PLC Mentor{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center py-4">
+                <h1 class="display-5 mb-3">
+                    <i class="fas fa-graduation-cap me-3"></i>
+                    PLC 학습하기
+                </h1>
+                <p class="lead mb-0">
+                    단계별 튜토리얼로 PLC 프로그래밍을 차근차근 배워보세요
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Learning Path -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="text-center mb-4">
+            <i class="fas fa-map text-primary me-2"></i>
+            학습 로드맵
+        </h2>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- Beginner Level -->
+    <div class="col-lg-4">
+        <div class="card tutorial-card h-100">
+            <div class="complexity-badge complexity-beginner">초급</div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-seedling fa-3x text-success"></i>
+                </div>
+                <h4 class="card-title text-center">PLC 기초</h4>
+                <p class="card-text">
+                    PLC의 기본 개념과 구조를 이해하고,
+                    간단한 입출력 제어를 배웁니다.
+                </p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success me-2"></i>PLC란 무엇인가?</li>
+                    <li><i class="fas fa-check text-success me-2"></i>입력/출력 디바이스</li>
+                    <li><i class="fas fa-check text-success me-2"></i>기본 래더 다이어그램</li>
+                    <li><i class="fas fa-check text-success me-2"></i>접점과 코일</li>
+                </ul>
+                <button class="btn btn-success w-100" onclick="showTutorial('basic')">
+                    <i class="fas fa-play me-2"></i>학습 시작
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Intermediate Level -->
+    <div class="col-lg-4">
+        <div class="card tutorial-card h-100">
+            <div class="complexity-badge complexity-intermediate">중급</div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-cogs fa-3x text-warning"></i>
+                </div>
+                <h4 class="card-title text-center">고급 명령어</h4>
+                <p class="card-text">
+                    타이머, 카운터, 비교 명령어 등
+                    고급 PLC 명령어를 학습합니다.
+                </p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-clock text-warning me-2"></i>타이머 명령어</li>
+                    <li><i class="fas fa-calculator text-warning me-2"></i>카운터 명령어</li>
+                    <li><i class="fas fa-balance-scale text-warning me-2"></i>비교 명령어</li>
+                    <li><i class="fas fa-random text-warning me-2"></i>데이터 이동</li>
+                </ul>
+                <button class="btn btn-warning w-100" onclick="showTutorial('advanced')">
+                    <i class="fas fa-play me-2"></i>학습 시작
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expert Level -->
+    <div class="col-lg-4">
+        <div class="card tutorial-card h-100">
+            <div class="complexity-badge complexity-advanced">고급</div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-rocket fa-3x text-danger"></i>
+                </div>
+                <h4 class="card-title text-center">시스템 통합</h4>
+                <p class="card-text">
+                    네트워크 통신, HMI 연동,
+                    실제 시스템 구축을 배웁니다.
+                </p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-network-wired text-danger me-2"></i>네트워크 통신</li>
+                    <li><i class="fas fa-desktop text-danger me-2"></i>HMI 연동</li>
+                    <li><i class="fas fa-database text-danger me-2"></i>데이터 로깅</li>
+                    <li><i class="fas fa-shield-alt text-danger me-2"></i>안전 시스템</li>
+                </ul>
+                <button class="btn btn-danger w-100" onclick="showTutorial('expert')">
+                    <i class="fas fa-play me-2"></i>학습 시작
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tutorial Content Area -->
+<div id="tutorial-content" class="d-none">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 id="tutorial-title" class="mb-0"></h3>
+                    <button class="btn btn-outline-secondary" onclick="hideTutorial()">
+                        <i class="fas fa-times"></i> 닫기
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="tutorial-body"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Reference -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="text-center mb-4">
+            <i class="fas fa-bookmark text-info me-2"></i>
+            빠른 참조
+        </h2>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- Device Types -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-microchip me-2"></i>
+                    디바이스 타입
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <span class="device-badge device-input">X (입력)</span>
+                    </div>
+                    <div class="col-6">
+                        <span class="device-badge device-output">Y (출력)</span>
+                    </div>
+                    <div class="col-6">
+                        <span class="device-badge device-memory">M (메모리)</span>
+                    </div>
+                    <div class="col-6">
+                        <span class="device-badge device-timer">T (타이머)</span>
+                    </div>
+                    <div class="col-6">
+                        <span class="device-badge device-memory">C (카운터)</span>
+                    </div>
+                    <div class="col-6">
+                        <span class="device-badge device-memory">D (데이터)</span>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <small class="text-muted">
+                        각 디바이스 타입을 클릭하면 상세 설명을 볼 수 있습니다.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Common Instructions -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-code me-2"></i>
+                    기본 명령어
+                </h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <td><code>LD</code></td>
+                            <td>접점 읽기</td>
+                        </tr>
+                        <tr>
+                            <td><code>OUT</code></td>
+                            <td>코일 출력</td>
+                        </tr>
+                        <tr>
+                            <td><code>AND</code></td>
+                            <td>논리곱</td>
+                        </tr>
+                        <tr>
+                            <td><code>OR</code></td>
+                            <td>논리합</td>
+                        </tr>
+                        <tr>
+                            <td><code>TON</code></td>
+                            <td>온 딜레이 타이머</td>
+                        </tr>
+                        <tr>
+                            <td><code>CTU</code></td>
+                            <td>업 카운터</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Safety Guidelines -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card bg-warning">
+            <div class="card-header">
+                <h4 class="mb-0 text-dark">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    안전 가이드라인
+                </h4>
+            </div>
+            <div class="card-body text-dark">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-shield-alt me-2"></i>기본 안전 원칙</h6>
+                        <ul>
+                            <li>모든 안전 회로는 하드웨어로 구성</li>
+                            <li>비상 정지는 직접 연결</li>
+                            <li>안전 기능은 PLC에 의존하지 않음</li>
+                            <li>정기적인 안전 시스템 점검</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-tools me-2"></i>프로그래밍 시 주의사항</h6>
+                        <ul>
+                            <li>안전 관련 논리는 단순하게 구성</li>
+                            <li>안전 출력은 직접 제어</li>
+                            <li>Fail-Safe 설계 적용</li>
+                            <li>충분한 테스트와 검증</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Practice Exercises -->
+<div class="row">
+    <div class="col-12">
+        <h2 class="text-center mb-4">
+            <i class="fas fa-dumbbell text-success me-2"></i>
+            실습 과제
+        </h2>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-lightbulb fa-2x text-warning mb-3"></i>
+                <h5>LED 제어</h5>
+                <p class="card-text">스위치로 LED를 제어하는 기본 회로를 만들어보세요.</p>
+                <button class="btn btn-outline-primary" onclick="loadExercise('led')">
+                    실습하기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-fan fa-2x text-info mb-3"></i>
+                <h5>모터 제어</h5>
+                <p class="card-text">타이머를 이용한 모터 자동 제어 시스템을 구현해보세요.</p>
+                <button class="btn btn-outline-primary" onclick="loadExercise('motor')">
+                    실습하기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <i class="fas fa-traffic-light fa-2x text-danger mb-3"></i>
+                <h5>신호등 제어</h5>
+                <p class="card-text">순서 제어를 이용한 신호등 시스템을 만들어보세요.</p>
+                <button class="btn btn-outline-primary" onclick="loadExercise('traffic')">
+                    실습하기
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 튜토리얼 데이터
+    const tutorials = {
+        basic: {
+            title: "🌱 PLC 기초 학습",
+            content: `
+                <div class="tutorial-content">
+                    <h4>1. PLC란 무엇인가요?</h4>
+                    <div class="explanation-box mb-4">
+                        <p><strong>PLC (Programmable Logic Controller)</strong>는 산업 자동화를 위한 컴퓨터입니다.</p>
+                        <ul>
+                            <li>실시간으로 입력을 읽고 출력을 제어</li>
+                            <li>혹독한 산업 환경에서도 안정적으로 동작</li>
+                            <li>래더 다이어그램으로 직관적인 프로그래밍</li>
+                        </ul>
+                    </div>
+
+                    <h4>2. 기본 구조</h4>
+                    <div class="ladder-diagram">
+|--[X000]--[X001]--+--[X002]----------(Y000)--|
+|                   |                          |
+|                   +--[X003]--[X004]---------|
+                    </div>
+                    <p class="mt-2">위 래더에서:</p>
+                    <ul>
+                        <li><span class="device-badge device-input">X000~X004</span>: 입력 접점</li>
+                        <li><span class="device-badge device-output">Y000</span>: 출력 코일</li>
+                        <li>논리: (X000 AND X001 AND X002) OR (X003 AND X004) = Y000</li>
+                    </ul>
+
+                    <h4>3. 실습해보기</h4>
+                    <div class="alert alert-info">
+                        <strong>과제:</strong> 두 개의 스위치가 모두 눌러졌을 때 LED가 켜지는 회로를 만들어보세요.
+                        <br><strong>힌트:</strong> AND 조건을 사용하세요.
+                    </div>
+                </div>
+            `
+        },
+        advanced: {
+            title: "⚙️ 고급 명령어 학습",
+            content: `
+                <div class="tutorial-content">
+                    <h4>1. 타이머 명령어</h4>
+                    <div class="explanation-box mb-4">
+                        <p><strong>TON (Timer On-Delay)</strong>: 입력이 ON된 후 설정시간 후에 출력이 ON</p>
+                        <div class="code-block">
+TON T0 K50    // 5초 타이머 (K50 = 5.0초)
+OUT Y000      // 타이머 완료 시 Y000 ON
+                        </div>
+                    </div>
+
+                    <h4>2. 카운터 명령어</h4>
+                    <div class="explanation-box mb-4">
+                        <p><strong>CTU (Count Up)</strong>: 입력 펄스를 카운트</p>
+                        <div class="code-block">
+CTU C0 K10    // 10회 카운트
+OUT Y001      // 카운트 완료 시 Y001 ON
+                        </div>
+                    </div>
+
+                    <h4>3. 비교 명령어</h4>
+                    <div class="explanation-box mb-4">
+                        <p>데이터 값을 비교하여 조건 판단</p>
+                        <div class="code-block">
+GT D0 K100    // D0 > 100 이면 TRUE
+LT D1 K50     // D1 < 50 이면 TRUE
+EQ D2 K25     // D2 = 25 이면 TRUE
+                        </div>
+                    </div>
+
+                    <h4>4. 실습 과제</h4>
+                    <div class="alert alert-warning">
+                        <strong>과제:</strong> 버튼을 3번 누르면 3초 후에 LED가 켜지는 회로를 만들어보세요.
+                        <br><strong>사용할 명령어:</strong> CTU, TON
+                    </div>
+                </div>
+            `
+        },
+        expert: {
+            title: "🚀 시스템 통합 학습",
+            content: `
+                <div class="tutorial-content">
+                    <h4>1. 네트워크 통신</h4>
+                    <div class="explanation-box mb-4">
+                        <p>PLC 간 또는 PLC와 상위 시스템 간의 데이터 교환</p>
+                        <ul>
+                            <li><strong>Ethernet/IP:</strong> 산업용 이더넷 프로토콜</li>
+                            <li><strong>MODBUS:</strong> 범용 통신 프로토콜</li>
+                            <li><strong>PROFINET:</strong> 지멘스 네트워크</li>
+                        </ul>
+                    </div>
+
+                    <h4>2. HMI 연동</h4>
+                    <div class="explanation-box mb-4">
+                        <p>Human Machine Interface - 운전자와 시스템 간의 인터페이스</p>
+                        <div class="code-block">
+// HMI에서 사용할 데이터 레지스터
+D100: 현재 온도
+D101: 설정 온도
+D102: 모터 속도
+M100: 자동/수동 모드
+                        </div>
+                    </div>
+
+                    <h4>3. 데이터 로깅</h4>
+                    <div class="explanation-box mb-4">
+                        <p>운전 데이터를 기록하고 분석</p>
+                        <ul>
+                            <li>생산량 기록</li>
+                            <li>알람 이력</li>
+                            <li>품질 데이터</li>
+                            <li>예방 보전 정보</li>
+                        </ul>
+                    </div>
+
+                    <h4>4. 안전 시스템</h4>
+                    <div class="alert alert-danger">
+                        <strong>중요:</strong> 안전 관련 기능은 별도의 안전 PLC나 하드웨어 회로로 구성해야 합니다.
+                        <ul>
+                            <li>Safety PLC 사용</li>
+                            <li>안전 카테고리 고려</li>
+                            <li>정기적인 안전 점검</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        }
+    };
+
+    // 튜토리얼 표시
+    function showTutorial(level) {
+        const tutorial = tutorials[level];
+        if (tutorial) {
+            document.getElementById('tutorial-title').innerHTML = tutorial.title;
+            document.getElementById('tutorial-body').innerHTML = tutorial.content;
+            document.getElementById('tutorial-content').classList.remove('d-none');
+
+            // 스크롤 이동
+            document.getElementById('tutorial-content').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+    }
+
+    // 튜토리얼 숨기기
+    function hideTutorial() {
+        document.getElementById('tutorial-content').classList.add('d-none');
+    }
+
+    // 실습 과제 로드
+    function loadExercise(type) {
+        const exercises = {
+            led: "기본 LED 제어 실습을 시작합니다...",
+            motor: "모터 제어 실습을 시작합니다...",
+            traffic: "신호등 제어 실습을 시작합니다..."
+        };
+
+        showAlert(exercises[type] || "실습을 준비 중입니다...", 'info');
+    }
+
+    // 페이지 로드 시 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        // 학습 진도 체크 (로컬 스토리지 활용)
+        const progress = localStorage.getItem('plc_learning_progress') || '{}';
+        const progressData = JSON.parse(progress);
+
+        // 진도에 따른 UI 업데이트
+        updateProgressUI(progressData);
+    });
+
+    // 진도 UI 업데이트
+    function updateProgressUI(progress) {
+        // 완료된 학습에 체크 표시
+        Object.keys(progress).forEach(level => {
+            if (progress[level].completed) {
+                const button = document.querySelector(`button[onclick="showTutorial('${level}')"]`);
+                if (button) {
+                    button.innerHTML = '<i class="fas fa-check me-2"></i>완료됨';
+                    button.classList.remove('btn-success', 'btn-warning', 'btn-danger');
+                    button.classList.add('btn-outline-success');
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,459 @@
+{% extends "base.html" %}
+
+{% block title %}GXW 파일 분석 - PLC Mentor{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center py-4">
+                <h1 class="display-5 mb-2">
+                    <i class="fas fa-search me-3"></i>
+                    GXW 파일 분석
+                </h1>
+                <p class="lead mb-0">
+                    GX Works2 프로젝트 파일을 업로드하여 자동으로 분석하고 이해하기 쉬운 설명을 받아보세요
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Section -->
+<div class="row mb-4">
+    <div class="col-lg-8 offset-lg-2">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0">
+                    <i class="fas fa-upload text-primary me-2"></i>
+                    파일 업로드
+                </h3>
+            </div>
+            <div class="card-body">
+                <form id="upload-form" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="file-input" class="form-label">
+                            <i class="fas fa-file me-1"></i>
+                            GXW 파일 선택
+                        </label>
+                        <input type="file"
+                               class="form-control"
+                               id="file-input"
+                               name="file"
+                               accept=".gxw,.gx2,.gx3"
+                               onchange="handleFileSelection(this)"
+                               required>
+                        <div class="form-text">
+                            지원 파일: .gxw, .gx2, .gx3 (최대 16MB)
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-play me-2"></i>
+                            분석 시작
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Progress Bar -->
+                <div id="progress-container" class="progress-container" style="display: none;">
+                    <h5 class="text-center mb-3">
+                        <i class="fas fa-cog fa-spin me-2"></i>
+                        파일 분석 중...
+                    </h5>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                             style="width: 100%"></div>
+                    </div>
+                    <p class="text-center mt-2 text-muted">
+                        파일을 읽고 분석하여 이해하기 쉬운 설명을 준비하고 있습니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Results Container -->
+<div id="results-container" style="display: none;">
+    <!-- Project Overview -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h3 class="mb-0">
+                        <i class="fas fa-info-circle text-primary me-2"></i>
+                        프로젝트 개요
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div id="project-overview">
+                        <!-- 프로젝트 개요가 여기에 표시됩니다 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Device Analysis -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h3 class="mb-0">
+                        <i class="fas fa-microchip text-success me-2"></i>
+                        디바이스 분석
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div id="device-analysis">
+                        <!-- 디바이스 분석이 여기에 표시됩니다 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ladder Logic Explanation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h3 class="mb-0">
+                        <i class="fas fa-layer-group text-warning me-2"></i>
+                        래더 로직 설명
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div id="ladder-explanation">
+                        <!-- 래더 로직 설명이 여기에 표시됩니다 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CODESYS Conversion -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h3 class="mb-0">
+                        <i class="fas fa-exchange-alt text-info me-2"></i>
+                        CODESYS 변환 결과
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div id="codesys-conversion">
+                        <!-- CODESYS 변환 결과가 여기에 표시됩니다 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h4 class="mb-3">
+                        <i class="fas fa-rocket text-primary me-2"></i>
+                        다음 단계
+                    </h4>
+                    <div class="d-flex justify-content-center flex-wrap gap-3">
+                        <a href="/learn" class="btn btn-primary btn-lg">
+                            <i class="fas fa-graduation-cap me-2"></i>
+                            더 자세하게 학습하기
+                        </a>
+                        <a href="/convert" class="btn btn-info btn-lg">
+                            <i class="fas fa-exchange-alt me-2"></i>
+                            다른 파일 변환하기
+                        </a>
+                        <button class="btn btn-success btn-lg" onclick="downloadResults()">
+                            <i class="fas fa-download me-2"></i>
+                            결과 다운로드
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let analysisResults = null;
+
+// 파일 선택 핸들러
+function handleFileSelection(input) {
+    // 파일 크기 검증
+    if (!validateFileSize(input)) {
+        return;
+    }
+
+    const file = input.files[0];
+    if (file) {
+        // 선택된 파일 표시
+        showSelectedFile(file.name);
+    }
+}
+
+// 선택된 파일 표시
+function showSelectedFile(fileName) {
+    const fileInput = document.getElementById('file-input');
+    const parentDiv = fileInput.parentElement;
+
+    // 기존 선택 알림 제거
+    const existingAlert = parentDiv.querySelector('.selected-file-alert');
+    if (existingAlert) {
+        existingAlert.remove();
+    }
+
+    // 업로드 완료 알림 제거 (새 파일 선택 시)
+    const uploadedAlert = parentDiv.querySelector('.uploaded-file-alert');
+    if (uploadedAlert) {
+        uploadedAlert.remove();
+    }
+
+    // 새 선택 알림 생성
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-info selected-file-alert mt-2 d-flex justify-content-between align-items-center';
+    alertDiv.innerHTML = '<div><i class="fas fa-file me-2"></i><strong>선택된 파일:</strong> ' + fileName + '</div><small class="text-muted">분석 시작 버튼을 클릭하세요</small>';
+
+    // 파일 input 다음에 추가
+    fileInput.parentElement.appendChild(alertDiv);
+}
+
+// 업로드된 파일 이름 표시
+function showUploadedFileName(fileName) {
+    const fileInput = document.getElementById('file-input');
+    const parentDiv = fileInput.parentElement;
+
+    // 기존 업로드 알림 제거
+    const existingAlert = parentDiv.querySelector('.uploaded-file-alert');
+    if (existingAlert) {
+        existingAlert.remove();
+    }
+
+    // 선택 알림 제거
+    const selectedAlert = parentDiv.querySelector('.selected-file-alert');
+    if (selectedAlert) {
+        selectedAlert.remove();
+    }
+
+    // 새 알림 생성
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-success uploaded-file-alert mt-2 d-flex justify-content-between align-items-center';
+    alertDiv.innerHTML = '<div><i class="fas fa-check-circle me-2"></i><strong>업로드 완료:</strong> ' + fileName + '</div><button type="button" class="btn btn-sm btn-outline-success" onclick="resetFileInput()"><i class="fas fa-plus me-1"></i>다른 파일 선택</button>';
+
+    // 파일 input 다음에 추가
+    fileInput.parentElement.appendChild(alertDiv);
+}
+
+// 파일 입력 초기화
+function resetFileInput() {
+    const fileInput = document.getElementById('file-input');
+    fileInput.value = '';
+
+    // 모든 알림 제거
+    const existingAlerts = document.querySelectorAll('.selected-file-alert, .uploaded-file-alert');
+    existingAlerts.forEach(alert => alert.remove());
+
+    // 결과 영역 숨기기
+    document.getElementById('results-container').style.display = 'none';
+
+    // 알림 표시
+    showAlert('새 파일을 선택할 수 있습니다.', 'info');
+}
+
+// 파일 업로드 및 분석
+document.getElementById('upload-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const fileInput = document.getElementById('file-input');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        showAlert('파일을 선택해주세요.', 'warning');
+        return;
+    }
+
+    // 업로드 시작
+    showProgress();
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const response = await fetch('/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            analysisResults = result;
+            displayResults(result);
+            showAlert('분석이 완료되었습니다! 🎉', 'success');
+
+            // 업로드된 파일 이름 표시
+            showUploadedFileName(file.name);
+        } else {
+            showAlert('분석 중 오류가 발생했습니다: ' + result.error, 'danger');
+        }
+    } catch (error) {
+        showAlert('서버 오류가 발생했습니다.', 'danger');
+        console.error('Error:', error);
+    } finally {
+        document.getElementById('progress-container').style.display = 'none';
+    }
+});
+
+// 분석 결과 표시
+function displayResults(results) {
+    document.getElementById('results-container').style.display = 'block';
+
+    displayProjectOverview(results);
+    displayDeviceAnalysis(results);
+    displayLadderExplanation(results);
+    displayCodesysConversion(results);
+}
+
+// 프로젝트 개요 표시
+function displayProjectOverview(results) {
+    const projectInfo = results.project_data?.project_info || {};
+
+    const html = '<div class="row"><div class="col-md-6"><h5><i class="fas fa-folder-open text-primary me-2"></i>프로젝트 정보</h5><p><strong>파일명:</strong> ' + (results.filename || 'Unknown') + '</p><p><strong>프로젝트명:</strong> ' + (projectInfo.name || 'PLC 프로젝트') + '</p></div><div class="col-md-6"><h5><i class="fas fa-chart-bar text-success me-2"></i>분석 요약</h5><p><strong>총 디바이스:</strong> ' + (results.project_data?.devices?.length || 0) + '개</p><p><strong>래더 단계:</strong> ' + (results.project_data?.ladder_rungs?.length || 0) + '개</p></div></div>';
+
+    document.getElementById('project-overview').innerHTML = html;
+}
+
+// 디바이스 분석 표시
+function displayDeviceAnalysis(results) {
+    const devices = results.project_data?.devices || [];
+
+    let html = '<div class="row mb-3"><div class="col-12"><h5><i class="fas fa-chart-pie text-success me-2"></i>디바이스 현황 (총 ' + devices.length + '개)</h5></div></div><div class="row g-3">';
+
+    devices.forEach(device => {
+        const deviceClass = {
+            'INPUT': 'device-input',
+            'OUTPUT': 'device-output',
+            'MEMORY': 'device-memory',
+            'TIMER': 'device-timer'
+        }[device.type] || 'device-memory';
+
+        html += '<div class="col-md-6 col-lg-4"><div class="card border-0 shadow-sm h-100"><div class="card-body"><div class="d-flex justify-content-between align-items-start mb-2"><span class="device-badge ' + deviceClass + '">' + device.name + '</span><small class="text-muted">사용 ' + (device.used_count || 1) + '회</small></div><h6 class="card-title">' + (device.description || device.name) + '</h6><p class="card-text small text-muted">' + getDeviceExplanation(device.type, device.name) + '</p>';
+
+        if (device.safety_level === 'CRITICAL') {
+            html += '<div class="alert alert-danger alert-sm py-1 px-2 small mb-0"><i class="fas fa-exclamation-triangle me-1"></i>안전 중요 디바이스</div>';
+        }
+
+        html += '</div></div></div>';
+    });
+
+    html += '</div>';
+
+    document.getElementById('device-analysis').innerHTML = html;
+}
+
+// 래더 로직 설명 표시
+function displayLadderExplanation(results) {
+    const ladderRungs = results.project_data?.ladder_rungs || [];
+
+    let html = '<div class="row mb-3"><div class="col-12"><h5><i class="fas fa-list-ol text-warning me-2"></i>단계별 동작 설명 (총 ' + ladderRungs.length + '단계)</h5></div></div>';
+
+    ladderRungs.forEach((rung, index) => {
+        html += '<div class="card mb-3"><div class="card-body"><div class="d-flex align-items-start"><div class="step-number">' + (index + 1) + '</div><div class="flex-grow-1"><h6 class="mb-2"><code>' + rung.instruction + ' ' + rung.device + '</code><span class="text-muted"> - ' + getInstructionKoreanName(rung.instruction) + '</span></h6><p class="mb-2">' + (rung.comment || '설명 없음') + '</p><div class="alert alert-light mb-0"><small><strong>📚 상세 설명:</strong> ' + (rung.explanation || getInstructionExplanation(rung.instruction, rung.device)) + '</small></div></div></div></div></div>';
+    });
+
+    document.getElementById('ladder-explanation').innerHTML = html;
+}
+
+// CODESYS 변환 결과 표시
+function displayCodesysConversion(results) {
+    const codesysCode = results.codesys_code || {};
+
+    const html = '<div class="row"><div class="col-12"><h5 class="mb-3"><i class="fas fa-code text-info me-2"></i>CODESYS Structured Text (ST) 코드</h5><div class="card"><div class="card-header d-flex justify-content-between align-items-center"><span>변환된 코드</span><button class="btn btn-sm btn-outline-primary" id="copy-codesys-btn"><i class="fas fa-copy me-1"></i>복사</button></div><div class="card-body p-0"><div class="code-block">' + (codesysCode.structured_text || '변환 결과가 없습니다.') + '</div></div></div><div class="alert alert-info mt-3"><h6><i class="fas fa-lightbulb me-2"></i>변환 주의사항</h6><ul class="mb-0"><li>🎓 교육적 변환: 이해하기 쉬운 코드로 변환했습니다</li><li>⚠️ 안전: 실제 운용 전에 안전 검토가 필요합니다</li><li>🔧 수정: CODESYS IDE에서 추가 수정이 필요할 수 있습니다</li><li>📝 변수명: 의미있는 이름으로 변경하여 사용하세요</li></ul></div></div></div>';
+
+    document.getElementById('codesys-conversion').innerHTML = html;
+
+    // 복사 버튼 이벤트 추가
+    const copyBtn = document.getElementById('copy-codesys-btn');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', function() {
+            const codeText = codesysCode.structured_text || '변환 결과가 없습니다.';
+            copyToClipboard(codeText);
+        });
+    }
+}
+
+// 결과 다운로드
+function downloadResults() {
+    if (!analysisResults) {
+        showAlert('다운로드할 결과가 없습니다.', 'warning');
+        return;
+    }
+
+    const data = {
+        analysis_date: new Date().toISOString(),
+        original_file: analysisResults.filename,
+        project_data: analysisResults.project_data,
+        codesys_code: analysisResults.codesys_code
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'plc_analysis_' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+
+    URL.revokeObjectURL(url);
+    showAlert('결과가 다운로드되었습니다!', 'success');
+}
+
+// 도움 함수들
+function getDeviceExplanation(type, name) {
+    const explanations = {
+        'INPUT': name + '은 외부에서 들어오는 신호입니다. 실제 버튼을 누르거나 센서가 동작할 때 ON됩니다.',
+        'OUTPUT': name + '은 PLC가 외부 기기를 제어할 때 사용합니다. 예를 들어 모터를 돌리거나 LED를 켜는 식으로요.',
+        'MEMORY': name + '은 PLC 내부의 가상 스위치입니다. 마치 컴퓨터의 변수처럼 생각하시면 됩니다.',
+        'TIMER': name + '은 시간을 재는 타이머입니다. 설정된 시간이 지나면 동작합니다.'
+    };
+
+    return explanations[type] || name + '에 대한 기본 정보를 확인하세요.';
+}
+
+function getInstructionKoreanName(instruction) {
+    const names = {
+        'LD': '로드 (접점 읽기)',
+        'LDI': '로드 인버스',
+        'AND': '그리고 (직렬)',
+        'ANI': '그리고 인버스',
+        'OR': '또는 (병렬)',
+        'OUT': '출력',
+        'SET': '셋 (래치)',
+        'RST': '리셋 (해제)'
+    };
+
+    return names[instruction] || instruction;
+}
+
+function getInstructionExplanation(instruction, device) {
+    const explanations = {
+        'LD': 'LD 명령어는 래더의 시작점입니다. ' + device + ' 입력이 ON되면 전류가 흐릅니다.',
+        'AND': 'AND 명령어는 이전 조건과 ' + device + ' 조건이 모두 참일 때만 전류가 흐릅니다.',
+        'OUT': 'OUT 명령어는 조건이 참일 때 ' + device + ' 출력을 ON시킵니다.',
+        'RST': 'RST 명령어는 조건이 참일 때 ' + device + '를 강제로 OFF시킵니다.'
+    };
+
+    return explanations[instruction] || instruction + ' 명령어가 ' + device + '에 사용되었습니다.';
+}
+</script>
+{% endblock %}

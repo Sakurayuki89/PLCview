@@ -1,0 +1,603 @@
+{% extends "base.html" %}
+
+{% block title %}CODESYS 변환 - PLC Mentor{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center py-4">
+                <h1 class="display-5 mb-3">
+                    <i class="fas fa-exchange-alt me-3"></i>
+                    CODESYS 변환
+                </h1>
+                <p class="lead mb-0">
+                    미쓰비시 GXW 파일을 CODESYS 형식으로 변환하세요
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Conversion Options -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-cog me-2"></i>
+                    변환 옵션
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>출력 형식</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="outputFormat" id="formatST" value="ST" checked>
+                            <label class="form-check-label" for="formatST">
+                                Structured Text (ST)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="outputFormat" id="formatLD" value="LD">
+                            <label class="form-check-label" for="formatLD">
+                                Ladder Diagram (LD)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="outputFormat" id="formatBoth" value="BOTH">
+                            <label class="form-check-label" for="formatBoth">
+                                둘 다 생성
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>추가 옵션</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="includeComments" checked>
+                            <label class="form-check-label" for="includeComments">
+                                교육용 주석 포함
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="includeDocumentation">
+                            <label class="form-check-label" for="includeDocumentation">
+                                상세 문서 생성
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="optimizeCode">
+                            <label class="form-check-label" for="optimizeCode">
+                                코드 최적화
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- File Upload Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-upload me-2"></i>
+                    파일 업로드
+                </h4>
+            </div>
+            <div class="card-body">
+                <form id="convertForm" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="gxwFile" class="form-label">GXW 파일 선택</label>
+                        <input type="file" class="form-control" id="gxwFile" name="file" accept=".gxw" required>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            GX Works2 프로젝트 파일(.gxw)만 지원됩니다. 최대 파일 크기: 16MB
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-info btn-lg">
+                            <i class="fas fa-exchange-alt me-2"></i>
+                            변환 시작
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="loadExample()">
+                            <i class="fas fa-file-alt me-2"></i>
+                            예제 파일 사용
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Progress Container -->
+<div id="progress-container" class="progress-container" style="display: none;">
+    <h5><i class="fas fa-cog fa-spin me-2"></i>변환 진행 중...</h5>
+    <div class="progress mb-3">
+        <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"
+             role="progressbar" style="width: 0%"></div>
+    </div>
+    <div id="progress-status">파일 분석 중...</div>
+</div>
+
+<!-- Conversion Results -->
+<div id="results-container" style="display: none;">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        변환 완료
+                    </h4>
+                    <div>
+                        <button class="btn btn-success me-2" onclick="downloadAll()">
+                            <i class="fas fa-download me-1"></i>
+                            전체 다운로드
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="resetConverter()">
+                            <i class="fas fa-redo me-1"></i>
+                            다시 변환
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Conversion Summary -->
+                    <div id="conversion-summary" class="mb-4"></div>
+
+                    <!-- Code Tabs -->
+                    <ul class="nav nav-tabs" id="codeTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="st-tab" data-bs-toggle="tab"
+                                    data-bs-target="#st-pane" type="button" role="tab">
+                                <i class="fas fa-code me-1"></i>
+                                Structured Text (ST)
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="ld-tab" data-bs-toggle="tab"
+                                    data-bs-target="#ld-pane" type="button" role="tab">
+                                <i class="fas fa-project-diagram me-1"></i>
+                                Ladder Diagram (LD)
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="docs-tab" data-bs-toggle="tab"
+                                    data-bs-target="#docs-pane" type="button" role="tab">
+                                <i class="fas fa-file-alt me-1"></i>
+                                문서
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content mt-3" id="codeTabContent">
+                        <!-- Structured Text Tab -->
+                        <div class="tab-pane fade show active" id="st-pane" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6>CODESYS Structured Text 코드</h6>
+                                <button class="btn btn-sm btn-outline-primary" onclick="copyCode('st-code')">
+                                    <i class="fas fa-copy me-1"></i>복사
+                                </button>
+                            </div>
+                            <div class="code-block" id="st-code">
+                                <!-- ST 코드가 여기에 표시됩니다 -->
+                            </div>
+                        </div>
+
+                        <!-- Ladder Diagram Tab -->
+                        <div class="tab-pane fade" id="ld-pane" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6>CODESYS Ladder Diagram 코드</h6>
+                                <button class="btn btn-sm btn-outline-primary" onclick="copyCode('ld-code')">
+                                    <i class="fas fa-copy me-1"></i>복사
+                                </button>
+                            </div>
+                            <div class="ladder-diagram" id="ld-code">
+                                <!-- LD 코드가 여기에 표시됩니다 -->
+                            </div>
+                        </div>
+
+                        <!-- Documentation Tab -->
+                        <div class="tab-pane fade" id="docs-pane" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6>변환 문서</h6>
+                                <button class="btn btn-sm btn-outline-primary" onclick="downloadDocs()">
+                                    <i class="fas fa-download me-1"></i>문서 다운로드
+                                </button>
+                            </div>
+                            <div id="conversion-docs">
+                                <!-- 변환 문서가 여기에 표시됩니다 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Conversion Guide -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h3 class="text-center mb-4">
+            <i class="fas fa-question-circle text-primary me-2"></i>
+            변환 가이드
+        </h3>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Before Conversion -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    변환 전 확인사항
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        GX Works2에서 정상적으로 컴파일되는 프로젝트
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        사용된 디바이스 번호 확인
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        특수 명령어 사용 여부 확인
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success me-2"></i>
+                        네트워크 설정 정보 백업
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- After Conversion -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    변환 후 작업
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-cog text-info me-2"></i>
+                        CODESYS에서 프로젝트 생성 및 코드 가져오기
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-tools text-info me-2"></i>
+                        하드웨어 설정 및 I/O 매핑
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-play text-info me-2"></i>
+                        시뮬레이션으로 동작 확인
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-bug text-info me-2"></i>
+                        필요시 수동 수정 및 최적화
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Supported Features -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-list me-2"></i>
+                    지원 기능
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6 class="text-success">✅ 지원되는 명령어</h6>
+                        <ul class="list-unstyled small">
+                            <li>• 기본 접점 명령어 (LD, AND, OR)</li>
+                            <li>• 출력 명령어 (OUT, SET, RST)</li>
+                            <li>• 타이머 명령어 (TON, TOF, TP)</li>
+                            <li>• 카운터 명령어 (CTU, CTD)</li>
+                            <li>• 비교 명령어 (GT, LT, EQ)</li>
+                            <li>• 데이터 이동 명령어 (MOV)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="text-warning">⚠️ 부분 지원</h6>
+                        <ul class="list-unstyled small">
+                            <li>• 고급 수학 연산</li>
+                            <li>• 문자열 처리 함수</li>
+                            <li>• 특수 모듈 제어</li>
+                            <li>• 인터럽트 처리</li>
+                            <li>• 통신 명령어</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="text-danger">❌ 미지원 기능</h6>
+                        <ul class="list-unstyled small">
+                            <li>• 위치 제어 명령어</li>
+                            <li>• 고속 카운터</li>
+                            <li>• 펄스 출력</li>
+                            <li>• CC-Link 통신</li>
+                            <li>• 특수 함수 블록</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let conversionResults = null;
+
+    // 폼 제출 처리
+    document.getElementById('convertForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const fileInput = document.getElementById('gxwFile');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            showAlert('파일을 선택해주세요.', 'warning');
+            return;
+        }
+
+        if (!validateFileSize(fileInput)) {
+            return;
+        }
+
+        // 변환 옵션 수집
+        const options = {
+            outputFormat: document.querySelector('input[name="outputFormat"]:checked').value,
+            includeComments: document.getElementById('includeComments').checked,
+            includeDocumentation: document.getElementById('includeDocumentation').checked,
+            optimizeCode: document.getElementById('optimizeCode').checked
+        };
+
+        performConversion(file, options);
+    });
+
+    // 변환 실행
+    function performConversion(file, options) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('options', JSON.stringify(options));
+
+        // 진행 표시
+        showProgress();
+
+        fetch('/convert', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideProgress();
+            if (data.success) {
+                displayResults(data);
+            } else {
+                showAlert('변환 중 오류가 발생했습니다: ' + data.error, 'danger');
+            }
+        })
+        .catch(error => {
+            hideProgress();
+            console.error('Error:', error);
+            showAlert('변환 중 오류가 발생했습니다.', 'danger');
+        });
+    }
+
+    // 진행 표시
+    function showProgress() {
+        document.getElementById('progress-container').style.display = 'block';
+        document.getElementById('results-container').style.display = 'none';
+
+        let progress = 0;
+        const progressBar = document.getElementById('progress-bar');
+        const progressStatus = document.getElementById('progress-status');
+
+        const steps = [
+            '파일 분석 중...',
+            '래더 로직 파싱 중...',
+            'CODESYS 코드 생성 중...',
+            '교육용 주석 추가 중...',
+            '문서 생성 중...',
+            '변환 완료!'
+        ];
+
+        const interval = setInterval(() => {
+            progress += 20;
+            progressBar.style.width = progress + '%';
+
+            const stepIndex = Math.floor(progress / 20);
+            if (stepIndex < steps.length) {
+                progressStatus.textContent = steps[stepIndex];
+            }
+
+            if (progress >= 100) {
+                clearInterval(interval);
+            }
+        }, 800);
+    }
+
+    // 진행 숨기기
+    function hideProgress() {
+        document.getElementById('progress-container').style.display = 'none';
+    }
+
+    // 결과 표시
+    function displayResults(data) {
+        conversionResults = data;
+
+        // 요약 정보 표시
+        const summary = `
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="h4 text-primary">${data.stats.totalInstructions}</div>
+                        <small class="text-muted">변환된 명령어</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="h4 text-success">${data.stats.networks}</div>
+                        <small class="text-muted">네트워크</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="h4 text-info">${data.stats.devices}</div>
+                        <small class="text-muted">사용된 디바이스</small>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-center">
+                        <div class="h4 text-warning">${data.stats.warnings || 0}</div>
+                        <small class="text-muted">주의사항</small>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.getElementById('conversion-summary').innerHTML = summary;
+
+        // ST 코드 표시
+        document.getElementById('st-code').textContent = data.stCode || '코드가 생성되지 않았습니다.';
+
+        // LD 코드 표시
+        document.getElementById('ld-code').textContent = data.ldCode || '래더 다이어그램이 생성되지 않았습니다.';
+
+        // 문서 표시
+        document.getElementById('conversion-docs').innerHTML = data.documentation || '<p>문서가 생성되지 않았습니다.</p>';
+
+        document.getElementById('results-container').style.display = 'block';
+
+        // 결과로 스크롤
+        document.getElementById('results-container').scrollIntoView({
+            behavior: 'smooth'
+        });
+    }
+
+    // 예제 파일 로드
+    function loadExample() {
+        showAlert('예제 파일을 사용한 변환 데모를 시작합니다...', 'info');
+
+        // 예제 데이터로 변환 결과 시뮬레이션
+        const exampleData = {
+            success: true,
+            stats: {
+                totalInstructions: 15,
+                networks: 5,
+                devices: 8,
+                warnings: 1
+            },
+            stCode: `PROGRAM Main
+VAR
+    start_button : BOOL; // X000 - 시작 버튼
+    stop_button : BOOL;  // X001 - 정지 버튼
+    motor_output : BOOL; // Y000 - 모터 출력
+    timer_1 : TON;       // T0 - 지연 타이머
+    timer_preset : TIME := T#5s;
+END_VAR
+
+// 기본 모터 제어 로직
+IF start_button AND NOT stop_button THEN
+    timer_1(IN := TRUE, PT := timer_preset);
+    motor_output := timer_1.Q;
+ELSE
+    timer_1(IN := FALSE, PT := timer_preset);
+    motor_output := FALSE;
+END_IF`,
+            ldCode: `// 네트워크 1: 모터 시작 조건
+|--[start_button]--+--[NOT stop_button]--+--[TON timer_1]--+
+|                  |                     |    PT:T#5s      |
+|                  |                     |                 |
+|                  +---------------------+-----------------+---(motor_output)
+
+// 네트워크 2: 타이머 리셋
+|--[stop_button]------------------------[RST timer_1]--`,
+            documentation: `
+                <h5>변환 요약</h5>
+                <p>미쓰비시 래더 로직이 CODESYS Structured Text와 Ladder Diagram으로 성공적으로 변환되었습니다.</p>
+
+                <h6>주요 변환 내용:</h6>
+                <ul>
+                    <li>기본 접점 로직 → IF-THEN 구문</li>
+                    <li>타이머 명령어 → TON 함수 블록</li>
+                    <li>디바이스 매핑: X000→start_button, X001→stop_button, Y000→motor_output</li>
+                </ul>
+
+                <div class="alert alert-warning">
+                    <strong>주의사항:</strong> 타이머 설정값을 TIME 형식으로 변환했습니다.
+                    실제 프로젝트에서는 시간 단위를 확인해주세요.
+                </div>
+            `
+        };
+
+        setTimeout(() => {
+            displayResults(exampleData);
+        }, 2000);
+    }
+
+    // 코드 복사
+    function copyCode(elementId) {
+        const element = document.getElementById(elementId);
+        const text = element.textContent;
+
+        navigator.clipboard.writeText(text).then(() => {
+            showAlert('코드가 클립보드에 복사되었습니다!', 'success');
+        }).catch(() => {
+            showAlert('복사에 실패했습니다.', 'danger');
+        });
+    }
+
+    // 전체 다운로드
+    function downloadAll() {
+        if (!conversionResults) {
+            showAlert('다운로드할 결과가 없습니다.', 'warning');
+            return;
+        }
+
+        showAlert('파일 다운로드를 준비 중입니다...', 'info');
+
+        // 실제 구현에서는 서버에서 ZIP 파일을 생성하여 다운로드
+        setTimeout(() => {
+            showAlert('다운로드가 시작됩니다.', 'success');
+        }, 1000);
+    }
+
+    // 문서 다운로드
+    function downloadDocs() {
+        showAlert('문서 다운로드를 준비 중입니다...', 'info');
+    }
+
+    // 변환기 리셋
+    function resetConverter() {
+        document.getElementById('convertForm').reset();
+        document.getElementById('results-container').style.display = 'none';
+        document.getElementById('progress-container').style.display = 'none';
+        conversionResults = null;
+    }
+</script>
+{% endblock %}

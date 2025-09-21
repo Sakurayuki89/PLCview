@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}PLC Mentor - 주니어 엔지니어를 위한 PLC 학습 도구{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center py-5">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-microchip me-3"></i>
+                    PLC Mentor
+                </h1>
+                <p class="lead mb-4">
+                    주니어 엔지니어를 위한 PLC 코드 학습 도구<br>
+                    <strong>"PLC 코드를 처음 보는 주니어 엔지니어도 5분 안에 이해할 수 있는 도구"</strong>
+                </p>
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="d-flex justify-content-center flex-wrap gap-3">
+                            <a href="/analyze" class="btn btn-light btn-lg">
+                                <i class="fas fa-upload me-2"></i>
+                                GXW 파일 분석하기
+                            </a>
+                            <a href="/learn" class="btn btn-outline-light btn-lg">
+                                <i class="fas fa-graduation-cap me-2"></i>
+                                학습 시작하기
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="text-center mb-4">
+            <i class="fas fa-star text-warning me-2"></i>
+            주요 기능
+        </h2>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- Feature 1: GXW 파일 분석 -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 text-center">
+            <div class="card-body">
+                <div class="mb-3">
+                    <i class="fas fa-file-code fa-3x text-primary"></i>
+                </div>
+                <h5 class="card-title">📁 GXW 파일 분석</h5>
+                <p class="card-text">
+                    GX Works2 프로젝트 파일을 업로드하면 자동으로 분석하여 
+                    이해하기 쉬운 형태로 변환합니다.
+                </p>
+                <a href="/analyze" class="btn btn-primary">
+                    <i class="fas fa-search me-1"></i>
+                    분석하기
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Feature 2: 래더 로직 시각화 -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 text-center">
+            <div class="card-body">
+                <div class="mb-3">
+                    <i class="fas fa-project-diagram fa-3x text-success"></i>
+                </div>
+                <h5 class="card-title">🔍 래더 로직 시각화</h5>
+                <p class="card-text">
+                    복잡한 래더 로직을 직관적인 다이어그램으로 
+                    표시하여 쉽게 이해할 수 있습니다.
+                </p>
+                <div class="btn btn-success disabled">
+                    <i class="fas fa-eye me-1"></i>
+                    시각화
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Feature 3: 교육적 설명 -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 text-center">
+            <div class="card-body">
+                <div class="mb-3">
+                    <i class="fas fa-chalkboard-teacher fa-3x text-warning"></i>
+                </div>
+                <h5 class="card-title">📚 교육적 설명</h5>
+                <p class="card-text">
+                    각 명령어와 로직의 의미를 상세하게 설명하여 
+                    PLC 기초 지식을 쌓을 수 있습니다.
+                </p>
+                <a href="/learn" class="btn btn-warning">
+                    <i class="fas fa-graduation-cap me-1"></i>
+                    학습하기
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Feature 4: CODESYS 변환 -->
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 text-center">
+            <div class="card-body">
+                <div class="mb-3">
+                    <i class="fas fa-exchange-alt fa-3x text-info"></i>
+                </div>
+                <h5 class="card-title">🔄 CODESYS 변환</h5>
+                <p class="card-text">
+                    미쓰비시 코드를 CODESYS 형식으로 변환하여 
+                    다른 플랫폼에서도 사용할 수 있습니다.
+                </p>
+                <a href="/convert" class="btn btn-info">
+                    <i class="fas fa-exchange-alt me-1"></i>
+                    변환하기
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Start Guide -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-light">
+                <h3 class="mb-0">
+                    <i class="fas fa-rocket text-primary me-2"></i>
+                    빠른 시작 가이드
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">1</div>
+                            <div>
+                                <h5>파일 업로드</h5>
+                                <p class="text-muted mb-0">
+                                    GX Works2 프로젝트 파일(.gxw)을 업로드하세요.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">2</div>
+                            <div>
+                                <h5>자동 분석</h5>
+                                <p class="text-muted mb-0">
+                                    시스템이 자동으로 코드를 분석하고 설명을 생성합니다.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="step-number">3</div>
+                            <div>
+                                <h5>학습 및 변환</h5>
+                                <p class="text-muted mb-0">
+                                    교육적 설명을 읽고 CODESYS 코드로 변환하세요.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="/analyze" class="btn btn-primary btn-lg">
+                        <i class="fas fa-play me-2"></i>
+                        지금 시작하기
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Benefits Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <h2 class="text-center mb-4">
+            <i class="fas fa-lightbulb text-warning me-2"></i>
+            PLC Mentor의 장점
+        </h2>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="explanation-box">
+            <h4>
+                <i class="fas fa-user-graduate me-2"></i>
+                초보자 친화적
+            </h4>
+            <p class="mb-0">
+                PLC를 처음 접하는 주니어 엔지니어도 쉽게 이해할 수 있도록 
+                단계별 설명과 실용적인 예시를 제공합니다.
+            </p>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="explanation-box">
+            <h4>
+                <i class="fas fa-shield-alt me-2"></i>
+                안전성 중시
+            </h4>
+            <p class="mb-0">
+                모든 코드 분석과 변환 과정에서 안전 가이드라인을 제시하여 
+                실무에서도 안전한 PLC 프로그래밍을 할 수 있도록 도와줍니다.
+            </p>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="explanation-box">
+            <h4>
+                <i class="fas fa-tools me-2"></i>
+                실무 적용 가능
+            </h4>
+            <p class="mb-0">
+                학습용 도구이지만 실제 프로젝트에서 바로 사용할 수 있는 
+                실용적인 코드 변환과 분석 기능을 제공합니다.
+            </p>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="explanation-box">
+            <h4>
+                <i class="fas fa-clock me-2"></i>
+                시간 절약
+            </h4>
+            <p class="mb-0">
+                복잡한 PLC 코드를 수동으로 분석하는 시간을 대폭 단축하여 
+                더 중요한 설계와 개발에 집중할 수 있습니다.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body text-center py-5">
+                <h3 class="mb-3">
+                    <i class="fas fa-rocket text-primary me-2"></i>
+                    지금 바로 시작해보세요!
+                </h3>
+                <p class="lead mb-4">
+                    PLC 코드 분석부터 변환까지, 모든 과정을 5분 안에 완료할 수 있습니다.
+                </p>
+                <div class="d-flex justify-content-center flex-wrap gap-3">
+                    <a href="/analyze" class="btn btn-primary btn-lg">
+                        <i class="fas fa-upload me-2"></i>
+                        파일 업로드하기
+                    </a>
+                    <a href="/learn" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-book me-2"></i>
+                        튜토리얼 보기
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 페이지 로드 시 환영 메시지 (첫 방문자용)
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!localStorage.getItem('plc_mentor_visited')) {
+            setTimeout(() => {
+                showAlert('PLC Mentor에 오신 것을 환영합니다! 🎉 GXW 파일을 업로드하여 시작해보세요.', 'info');
+                localStorage.setItem('plc_mentor_visited', 'true');
+            }, 1000);
+        }
+    });
+</script>
+{% endblock %}
