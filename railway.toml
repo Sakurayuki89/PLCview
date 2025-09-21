@@ -8,5 +8,6 @@ healthcheckTimeout = 300
 restartPolicyType = "always"
 
 [env]
-PORT = "8080"
+PORT = "${{ PORT }}"
 FLASK_ENV = "production"
+PYTHONPATH = "/app"

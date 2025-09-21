@@ -37,7 +37,10 @@
       "Bash(mv:*)",
       "Bash(for endpoint in \"/\" \"/learn\" \"/convert\" \"/analyze\")",
       "Bash(done)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(cp:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
