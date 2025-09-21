@@ -36,7 +36,8 @@
       "mcp__serena__find_file",
       "Bash(mv:*)",
       "Bash(for endpoint in \"/\" \"/learn\" \"/convert\" \"/analyze\")",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

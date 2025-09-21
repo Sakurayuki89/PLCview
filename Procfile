@@ -1,0 +1,1 @@
+web: cd plc-mentor && python app.py
