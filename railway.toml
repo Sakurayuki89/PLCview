@@ -1,13 +1,5 @@
-[build]
-builder = "nixpacks"
-
 [deploy]
 startCommand = "cd plc-mentor && python app.py"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "always"
-
-[env]
-PORT = "${{ PORT }}"
-FLASK_ENV = "production"
-PYTHONPATH = "/app"
