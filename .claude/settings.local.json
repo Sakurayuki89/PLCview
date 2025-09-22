@@ -40,7 +40,10 @@
       "Bash(git push:*)",
       "Bash(cp:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "mcp__context7__get-library-docs",
+      "mcp__serena__find_symbol",
+      "Bash(rm:*)"
     ],
     "deny": [],
     "ask": []

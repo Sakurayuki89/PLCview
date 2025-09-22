@@ -1,0 +1,117 @@
+# Gemini CLI 명령 관리 시스템
+# ====================
+
+## 현재 상태
+명령 카운터: 0/5
+현재 단계: Phase 1 - 기반 구조 구축
+마지막 업데이트: 2024-01-01
+
+## ⚠️ 중요 사항
+- 명령이 5개에 도달하면 이 파일을 초기화합니다
+- 각 명령 실행 후 반드시 결과를 Claude에게 공유하세요
+- 명령은 순서대로 실행해주세요
+
+## 📋 현재 실행 대기 명령들
+
+### 명령 1: Enhanced GXW Parser 클래스 생성
+```
+PLC 순서도 프로젝트를 위한 Enhanced GXW Parser 클래스를 Python으로 작성해주세요.
+
+요구사항:
+1. 기존 GXWParser를 상속받는 EnhancedGXWParser 클래스
+2. 제어 흐름 분석 기능 추가: CJ(조건부 점프), CALL(서브루틴), END(종료), FEND(메인 종료)
+3. extract_control_flow(self, ladder_rungs) 메서드 구현
+4. analyze_branches(self, rungs) 메서드로 조건부 분기 감지
+5. 파일 경로: plc-mentor/app/parser/enhanced_gxw_parser.py
+6. 기존 instruction_map을 확장하여 제어 명령어 추가
+7. 상세한 docstring과 타입 힌트 포함
+
+예시 구조:
+```python
+class EnhancedGXWParser(GXWParser):
+    def __init__(self):
+        super().__init__()
+        self.control_instructions = {
+            'CJ': 'conditional_jump',
+            'CALL': 'subroutine_call',
+            'END': 'program_end',
+            'FEND': 'main_end'
+        }
+
+    def extract_control_flow(self, ladder_rungs: List[Dict]) -> List[Dict]:
+        # 제어 흐름 노드들을 추출하는 로직
+        pass
+
+    def analyze_branches(self, rungs: List[Dict]) -> List[Dict]:
+        # 조건부 분기를 분석하는 로직
+        pass
+```
+
+완전한 클래스 구현 코드를 작성해주세요.
+```
+
+### 명령 2: Basic Flow Generator 클래스 생성
+```
+Mermaid.js 기반 기본 순서도 생성 클래스를 Python으로 작성해주세요.
+
+요구사항:
+1. BasicFlowGenerator 클래스 구현
+2. generate_simple_flowchart(self, ladder_rungs) 메서드로 기본 Mermaid 텍스트 생성
+3. generate_linear_flow(self, rungs) 메서드로 선형 순서도 생성
+4. add_decision_nodes(self, flow_data) 메서드로 조건부 노드 추가
+5. 파일 경로: plc-mentor/app/analyzer/basic_flow_generator.py
+6. Mermaid.js 문법 준수 (flowchart TD, 노드 연결 등)
+7. PLC 명령어별 적절한 노드 모양 매핑
+
+예시 출력:
+```
+flowchart TD
+    start[시작]
+    step1[LD X001: 시동 버튼]
+    step2{AND X002: 비상정지 해제?}
+    step3[OUT Y001: 모터 출력]
+
+    start --> step1
+    step1 --> step2
+    step2 -->|Yes| step3
+    step2 -->|No| stop[정지]
+```
+
+완전한 클래스 구현 코드를 작성해주세요.
+```
+
+### 명령 3: Flask 라우트 확장
+```
+(대기 중 - 명령 1, 2 완료 후 추가 예정)
+```
+
+### 명령 4:
+```
+(대기 중)
+```
+
+### 명령 5:
+```
+(대기 중)
+```
+
+## 📝 명령 실행 로그
+- [ ] 명령 1 실행됨 (날짜: )
+- [ ] 명령 2 실행됨 (날짜: )
+- [ ] 명령 3 실행됨 (날짜: )
+- [ ] 명령 4 실행됨 (날짜: )
+- [ ] 명령 5 실행됨 (날짜: )
+
+## 🔄 초기화 트리거
+명령 5개 실행 완료 시 이 파일이 자동으로 초기화되며 새로운 명령 세트가 시작됩니다.
+
+## 💡 사용 방법
+1. "현재 실행 대기 명령들" 섹션에서 첫 번째 명령을 복사
+2. Gemini CLI에 붙여넣기 실행
+3. 결과를 Claude에게 공유
+4. Claude가 다음 명령을 추가하거나 기존 명령을 업데이트
+5. 5개 명령 완료 시 파일 초기화
+
+---
+마지막 수정: Claude Code Assistant
+다음 업데이트: 명령 실행 후
